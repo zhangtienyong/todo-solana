@@ -1,0 +1,26 @@
+# Ignore Node.js dependencies (npm, yarn, etc.)
+node_modules/
+
+# Ignore build output
+/.next/
+/out/
+
+# Ignore environment-specific files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore log files
+*.log
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore IDE or editor-specific files
+.vscode/
+.idea/
+*.iml
+
+# Ignore build cache (optional)
+.next/cache/
