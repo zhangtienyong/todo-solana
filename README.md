@@ -1,1 +1,1 @@
-# mini-solana-product-development
+# todo-solana-product-development
