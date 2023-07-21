@@ -32,7 +32,11 @@ export function useTodo() {
             if (program && publicKey && !transactionPending) {
                 try {
                     setLoading(true)
-                    const [profilePda, profileBump] = await findProgramAddressSync([utf8.encode('USER_STATE'), publicKey.toBuffer()], program.programId)
+                    const [profilePda, profileBump] = await findProgramAddressSync(
+                        [utf8.encode('USER_STATE'), 
+                        publicKey.toBuffer()], 
+                        program.programId
+                        )
                     const profileAccount = await program.account.userProfile.fetch(profilePda)
 
                     if (profileAccount) {
@@ -64,7 +68,11 @@ export function useTodo() {
         if (program && publicKey) {
             try {
                 setTransactionPending(true)
-                const [profilePda, profileBump] = findProgramAddressSync([utf8.encode('USER_STATE'), publicKey.toBuffer()], program.programId)
+                const [profilePda, profileBump] = findProgramAddressSync(
+                    [utf8.encode('USER_STATE'), 
+                    publicKey.toBuffer()], 
+                    program.programId
+                    )
 
                 const tx = await program.methods
                     .initializeUser()
@@ -85,17 +93,22 @@ export function useTodo() {
         }
     }
 
-    const initializeStaticUser = () => {
-        setInitialized(true)
-    }
-
     const addTodo = async (e) => {
         e.preventDefault()
         if (program && publicKey) {
             try {
                 setTransactionPending(true)
-                const [profilePda, profileBump] = findProgramAddressSync([utf8.encode('USER_STATE'), publicKey.toBuffer()], program.programId)
-                const [todoPda, todoBump] = findProgramAddressSync([utf8.encode('TODO_STATE'), publicKey.toBuffer(), Uint8Array.from([lastTodo])], program.programId)
+                const [profilePda, profileBump] = findProgramAddressSync(
+                    [utf8.encode('USER_STATE'), 
+                    publicKey.toBuffer()], 
+                    program.programId
+                    )
+                const [todoPda, todoBump] = findProgramAddressSync(
+                    [utf8.encode('TODO_STATE'), 
+                    publicKey.toBuffer(), 
+                    Uint8Array.from([lastTodo])], 
+                    program.programId
+                    )
                 
                 if (input) {
                     await program.methods.addTodo(input).accounts({
@@ -121,7 +134,11 @@ export function useTodo() {
             try {
                 setTransactionPending(true)
                 setLoading(true)
-                const [profilePda, profileBump] = findProgramAddressSync([utf8.encode('USER_STATE'), publicKey.toBuffer()], program.programId)
+                const [profilePda, profileBump] = findProgramAddressSync(
+                    [utf8.encode('USER_STATE'), 
+                    publicKey.toBuffer()], 
+                    program.programId
+                    )
 
                 await program.methods.markTodo(todoIdx).accounts({
                         userProfile: profilePda,
@@ -145,7 +162,11 @@ export function useTodo() {
             try {
                 setTransactionPending(true)
                 setLoading(true)
-                const [profilePda, profileBump] = findProgramAddressSync([utf8.encode('USER_STATE'), publicKey.toBuffer()], program.programId)
+                const [profilePda, profileBump] = findProgramAddressSync(
+                    [utf8.encode('USER_STATE'), 
+                    publicKey.toBuffer()], 
+                    program.programId
+                    )
 
                 await program.methods.removeTodo(todoIdx).accounts({
                         userProfile: profilePda,
@@ -169,7 +190,6 @@ export function useTodo() {
 
     return { 
         initialized, 
-        initializeStaticUser, 
         initializeUser, 
         loading, 
         transactionPending, 
@@ -177,7 +197,6 @@ export function useTodo() {
         incompleteTodos, 
         handleChange, 
         input, 
-        setInput, 
         addTodo, 
         markTodo, 
         removeTodo,

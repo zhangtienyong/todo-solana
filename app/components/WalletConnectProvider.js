@@ -9,13 +9,18 @@ export const WalletConnectProvider = ({ children }) => {
     const network = WalletAdapterNetwork.Devnet
     const endpoint = useMemo(() => {
         if (network === WalletAdapterNetwork.Devnet) {
-            return 'https://api.devnet.solana.com'
+            return "https://billowing-aged-dream.solana-devnet.discover.quiknode.pro/9e11d48c306fc811464fd81db165230ab908c35d/"
         }
-
         return clusterApiUrl(network)
     }, [network])
 
-    const wallets = useMemo(() => [new PhantomWalletAdapter(), new GlowWalletAdapter(), new SlopeWalletAdapter(), new SolflareWalletAdapter({ network }), new TorusWalletAdapter()], [network])
+    const wallets = useMemo(() => [
+        new PhantomWalletAdapter(), 
+        new GlowWalletAdapter(), 
+        new SlopeWalletAdapter(), 
+        new SolflareWalletAdapter({ network }), 
+        new TorusWalletAdapter()
+    ], [network])
 
     return (
         <ConnectionProvider endpoint={endpoint}>
