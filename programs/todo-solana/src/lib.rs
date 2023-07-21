@@ -8,7 +8,7 @@ use crate::{constant::*, error::*, states::*};
 declare_id!("1MaRAsCehHKbQ8ws2EdNLFArCJp17khPfQp55C9XwBw");
 
 #[program]
-pub mod clever_todo {
+pub mod todo_solana {
     use super::*;
 
     pub fn initialize_user(
@@ -22,7 +22,10 @@ pub mod clever_todo {
         Ok(())
     }
 
-    pub fn add_todo(ctx: Context<AddTodo>, _content: String) -> Result<()> {
+    pub fn add_todo(
+        ctx: Context<AddTodo>,
+        _content: String
+    ) -> Result<()> {
         let todo_account = &mut ctx.accounts.todo_account;
         let user_profile = &mut ctx.accounts.user_profile;
 
@@ -32,29 +35,35 @@ pub mod clever_todo {
         todo_account.marked = false;
 
         user_profile.last_todo = user_profile.last_todo
-            .checked_add(1)
-            .unwrap();
+        .checked_add(1)
+        .unwrap();
 
-        user_profile.todo_count = user_profile.todo_count
-            .checked_add(1)
-            .unwrap();
+         user_profile.todo_count = user_profile.todo_count
+        .checked_add(1)
+        .unwrap();
 
         Ok(())
     }
 
-    pub fn mark_todo(ctx: Context<MarkTodo>, todo_idx: u8) -> Result<()> {
+    pub fn mark_todo(
+        ctx: Context<MarkTodo>,
+        todo_idx: u8
+    ) -> Result<()> {
         let todo_account = &mut ctx.accounts.todo_account;
         require!(!todo_account.marked, TodoError::AlreadyMarked);
-        todo_account.marked = true;
+         todo_account.marked = true;
 
         Ok(())
     }
 
-    pub fn remove_todo(ctx: Context<RemoveTodo>, todo_idx: u8) -> Result<()> {
+    pub fn remove_todo(
+        ctx: Context<RemoveTodo>,
+        todo_idx: u8
+    ) -> Result<()> {
         let user_profile = &mut ctx.accounts.user_profile;
         user_profile.todo_count = user_profile.todo_count
-            .checked_sub(1)
-            .unwrap();
+        .checked_add(1)
+        .unwrap();
 
         Ok(())
     }
@@ -74,13 +83,12 @@ pub struct InitializeUser<'info> {
         space = 8 + std::mem::size_of::<UserProfile>(),
     )]
     pub user_profile: Box<Account<'info, UserProfile>>,
-
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 #[instruction()]
-pub struct AddTodo<'info> {
+pub struct AddTodo<'info>  {
     #[account(
         mut,
         seeds = [USER_TAG, authority.key().as_ref()],
@@ -97,10 +105,9 @@ pub struct AddTodo<'info> {
         space = std::mem::size_of::<TodoAccount>() + 8,
     )]
     pub todo_account: Box<Account<'info, TodoAccount>>,
-
+    
     #[account(mut)]
     pub authority: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -108,24 +115,23 @@ pub struct AddTodo<'info> {
 #[instruction(todo_idx: u8)]
 pub struct MarkTodo<'info> {
     #[account(
-        mut,
-        seeds = [USER_TAG, authority.key().as_ref()],
-        bump,
+        mut, 
+        seeds = [USER_TAG, authority.key().as_ref()], 
+        bump, 
         has_one = authority,
     )]
     pub user_profile: Box<Account<'info, UserProfile>>,
 
     #[account(
-        mut,
+        mut, 
         seeds = [TODO_TAG, authority.key().as_ref(), &[todo_idx].as_ref()],
-        bump,
+        bump, 
         has_one = authority,
     )]
-    pub todo_account: Box<Account<'info, TodoAccount>>,
+    pub todo_account:Box<Account<'info, TodoAccount>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -141,7 +147,7 @@ pub struct RemoveTodo<'info> {
     pub user_profile: Box<Account<'info, UserProfile>>,
 
     #[account(
-        mut,
+        mut, 
         close = authority,
         seeds = [TODO_TAG, authority.key().as_ref(), &[todo_idx].as_ref()],
         bump,
@@ -149,25 +155,7 @@ pub struct RemoveTodo<'info> {
     )]
     pub todo_account: Box<Account<'info, TodoAccount>>,
 
-    #[account(mut)]
+   #[account(mut)]
     pub authority: Signer<'info>,
-
     pub system_program: Program<'info, System>,
-}
-
-pub fn is_zero_account(account_info: &AccountInfo) -> bool {
-    let account_data: &[u8] = &account_info.data.borrow();
-    let len = account_data.len();
-    let mut is_zero = true;
-    for i in 0..len - 1 {
-        if account_data[i] != 0 {
-            is_zero = false;
-        }
-    }
-    is_zero
-}
-
-pub fn bump(seeds: &[&[u8]], program_id: &Pubkey) -> u8 {
-    let (_found_key, bump) = Pubkey::find_program_address(seeds, program_id);
-    bump
 }
